@@ -25,11 +25,14 @@ Click save.
 
 Before your Tropo account can send SMS messages, you have to contact Tropo Support and ask them to enable outbound SMS messages.
 Do this by e-mailing Tropo Support at support@tropo.com requesting that they do so. Be sure to give them your Tropo username.
+They will then send you an PIN and a link that you have to enter it in.
 
 When you are ready to use the application as a production level application, you will also need to upgrade the account with a payment method.
 Do this by navigating to https://www.tropo.com/billing/upgrade and entering your credit card information.
+Note: Tropo Support has to activate your account before you can do this. Otherwise you will receive an error message.
 
 Finally, you need to tell the algorithmic trading application how to call Tropo. 
+We do this by adding the Tropo API key into the algorithmic trading app's configuration file.
 Go to this link to get a list of your Tropo applications: https://www.tropo.com/applications
 Click on the algorithmicTradingAlerts application.
 Click on API Keys to the left.

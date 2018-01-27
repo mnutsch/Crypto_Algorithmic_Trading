@@ -5,6 +5,7 @@
 # Description: This script reads cryptocurrency exchange rate information from the exchange GDAX.
 
 #examples of calling the functions
+#print "Reading the exchange rates from the GDAX exchange."
 #print "The BCH-USD price is: " + getBCHToUSDFromGDAX();
 #print "The LTC-USD price is: " + getLTCToUSDFromGDAX();
 #print "The BTC-USD price is: " + getBTCToUSDFromGDAX();
@@ -17,8 +18,6 @@ gdax_bchUsdPrice = 0.00
 gdax_ethUsdPrice = 0.00
 gdax_ltcUsdPrice = 0.00
 gdax_btcUsdPrice = 0.00
-
-print "Reading the exchange rates from the GDAX exchange."
 
 ###################################################
 

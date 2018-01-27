@@ -1,8 +1,14 @@
 # Name: readExchangeRatesGemini.py
 # Author: Matt Nutsch
 # Date: 1-19-2018
-# Last Edited: 1-19-2018
+# Last Edited: 1-27-2018
 # Description: This script reads cryptocurrency exchange rate information from the exchange Gemini.
+
+#examples of calling the functions
+#print "Reading the exchange rates from the Gemini exchange."
+#print "The BTC-USD price is: " + getBTCToUSDFromGemini();
+#print "The ETH-USD price is: " + getETHToUSDFromGemini();
+#print "The ETH-BTC price is: " + getETHToBTCFromGemini();
 
 #import libraries
 import urllib, json, time
@@ -11,73 +17,84 @@ gemini_bchUsdPrice = 0.00
 gemini_ethUsdPrice = 0.00
 gemini_ethBtcPrice = 0.00
 
-print "Reading the exchange rates from the Gemini exchange."
+###################################################
+
+def getBTCToUSDFromGemini():
+
+	#BTC-USD
+	#Get the BTC-USD price.
+
+	#set up the URL
+	url = "https://api.gemini.com/v1/pubticker/btcusd"
+
+	#read the page contents
+	response = urllib.urlopen(url)
+	data = json.loads(response.read())
+
+	gemini_btcUsdPrice = data["ask"]
+
+	#output the data so that we can see it
+	#print "The raw output is: "
+	#print data
+
+	#print "The BTC-USD price is: " + gemini_btcUsdPrice
+
+	#pause briefly
+	time.sleep(.300)
+	
+	return gemini_btcUsdPrice;
 
 ###################################################
 
-#BTC-USD
-#Get the BTC-USD price.
+def getETHToUSDFromGemini():
 
-#set up the URL
-url = "https://api.gemini.com/v1/pubticker/btcusd"
+	#ETH-USD
+	#Get the ETH-USD price.
 
-#read the page contents
-response = urllib.urlopen(url)
-data = json.loads(response.read())
+	#set up the URL
+	url = "https://api.gemini.com/v1/pubticker/ethusd"
 
-gemini_btcUsdPrice = data["ask"]
+	#read the page contents
+	response = urllib.urlopen(url)
+	data = json.loads(response.read())
 
-#output the data so that we can see it
-#print "The raw output is: "
-#print data
+	gemini_ethUsdPrice = data["ask"]
 
-print "The BTC-USD price is: " + gemini_btcUsdPrice
+	#output the data so that we can see it
+	#print "The raw output is: "
+	#print data
 
-#pause briefly
-time.sleep(.300)
+	#print "The ETH-USD price is: " + gemini_ethUsdPrice
 
-###################################################
-
-#ETH-USD
-#Get the ETH-USD price.
-
-#set up the URL
-url = "https://api.gemini.com/v1/pubticker/ethusd"
-
-#read the page contents
-response = urllib.urlopen(url)
-data = json.loads(response.read())
-
-gemini_ethUsdPrice = data["ask"]
-
-#output the data so that we can see it
-#print "The raw output is: "
-#print data
-
-print "The ETH-USD price is: " + gemini_ethUsdPrice
-
-#pause briefly
-time.sleep(.300)
+	#pause briefly
+	time.sleep(.300)
+	
+	return gemini_ethUsdPrice;
 
 ###################################################
 
-#ETH-BTC
-#Get the ETH-BTC price.
+def getETHToBTCFromGemini():
 
-#set up the URL
-url = "https://api.gemini.com/v1/pubticker/ethbtc"
+	#ETH-BTC
+	#Get the ETH-BTC price.
 
-#read the page contents
-response = urllib.urlopen(url)
-data = json.loads(response.read())
+	#set up the URL
+	url = "https://api.gemini.com/v1/pubticker/ethbtc"
 
-gemini_ethBtcPrice = data["ask"]
+	#read the page contents
+	response = urllib.urlopen(url)
+	data = json.loads(response.read())
 
-#output the data so that we can see it
-#print "The raw output is: "
-#print data
+	gemini_ethBtcPrice = data["ask"]
 
-print "The ETH-BTC price is: " + gemini_ethBtcPrice
+	#output the data so that we can see it
+	#print "The raw output is: "
+	#print data
 
-#pause briefly
-time.sleep(.300)
+	#print "The ETH-BTC price is: " + gemini_ethBtcPrice
+
+	#pause briefly
+	time.sleep(.300)
+	
+	return gemini_ethBtcPrice;
+	

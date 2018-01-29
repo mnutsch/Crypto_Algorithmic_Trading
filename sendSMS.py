@@ -5,10 +5,10 @@
 # Description: This script sends a SMS message through the service Tropo.
 
 #example usage
-print "Sending SMS message."
-tropoNumberToDial = "15551112222"
-tropoMsg = "LoremIpsum"
-sendSMSMessage(tropoNumberToDial, tropoMsg);
+#print "Sending SMS message."
+#tropoNumberToDial = "15551112222"
+#tropoMsg = "LoremIpsum"
+#sendSMSMessage(tropoNumberToDial, tropoMsg);
 
 import urllib, json, time
 

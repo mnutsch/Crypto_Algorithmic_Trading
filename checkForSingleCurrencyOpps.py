@@ -1,14 +1,16 @@
-# Name: 
+# Name: checkForSingleCurrencyOpps.py
 # Author: Patrick Mullaney
 # Date Created: 1-20-2018
 # Last Edited: 1-9-2018
-# Description: This script checks for arbitrage opportunities.
+# Description: This script checks for single currency arbitrage opportunities.
 
 # Opportunity object stores the potential info about an exchange.
 class Opportunity():
     currency = None
     buyExchange = None
     sellExchange = None
+    buyPrice = None
+    sellPrice = None
     amount = None
     profitLoss = 0.00
 
@@ -21,14 +23,6 @@ class Exchange():
     withdrawFee = None
     exchangeFee = None
     # Add different fees for maker/taker?
-
-# Returns exchange fee.
-def getExchangeFee(exchange):
-    if exchange is "gdax":
-        fee = 1.0
-    elif exchange is "gemini":
-        fee = 0.5
-    return fee
 
 # Takes the amount of coins, information about the high-price exchange, low-price exchange, and returns info about arbitrage opportunity.
 def calculateProfitLoss(amount, high, low):
@@ -57,11 +51,14 @@ def calculateProfitLoss(amount, high, low):
     arbitrage.buyExchange = low.name
     arbitrage.sellExchange = high.name
     arbitrage.profitLoss = profit
+    arbitrage.sellPrice = '${:,.2f}'.format(high.price)
+    arbitrage.buyPrice = '${:,.2f}'.format(low.price)
     # Optimize by include exchange prices/fees?
     
     return arbitrage
+###########################################################################
 
-# Check opportunity
+# Checks for an arbitrage opportunity for a given a mount between exchanges.
 def checkOpportunity(amount, gdax, gemini):
     
     # If GDAX price is higher.
@@ -77,99 +74,154 @@ def checkOpportunity(amount, gdax, gemini):
     # Else prices equal, no arbitrage opportunity.
     elif gdax.price == gemini.price:
         return None
+###################################################################
 
+# Calculates arbitrage opportunities for all currencies at exchanges.
 def checkAllCurrencies():
     # Optimize amounts?
     amount = 100
     
-    # Bitcoin Cash (BCH)
-    # GDAX bitcoin exchange info.
-    gdaxBch = Exchange()
-    gdaxBch.name = "gdax"
-    gdaxBch.currency = "BCH"
-    gdaxBch.price = 650.00
-    gdaxBch.withdrawFee = 2
-    gdaxBch.exchangeFee = getExchangeFee(gdaxBch.name)
-    gdaxBch.depositFee = 1
-
-    # Gemini bitcoin exchange info.
-    geminiBch = Exchange()
-    geminiBch.name = "gdax"
-    geminiBch.currency = "BCH"
-    geminiBch.price = 636.00
-    geminiBch.withdrawFee = 1
-    geminiBch.exchangeFee = getExchangeFee(geminiBch.name)
-    geminiBch.depoositFee = 1
-
+    # GDAX Bitcoin Cash (BCH) exchange info.
+    gdaxBch = getExchange('gdax', 'BCH')
+    # Gemini Bitcoin Cash (BCH) exchange info.
+    geminiBch = getExchange('gemini', 'BCH')
     # Check opportunities for bitcoin.
     oppBch = checkOpportunity(amount, gdaxBch, geminiBch)
-    
-    # Ethereum (ETH)
-    # GDAX ethereum exchange info.
-    gdaxEth = Exchange()
-    gdaxEth.name = "gdax"
-    gdaxEth.currench = "ETH"
-    gdaxEth.price = 250.00
-    gdaxEth.withdrawFee = 2
-    gdaxEth.exchangeFee = getExchangeFee(gdaxEth.name)
-    gdaxEth.depositFee = 1
-    
-    # Gemini ethereum exchange info.
-    geminiEth = Exchange()
-    geminiEth.name = "gemini"
-    geminiEth.currency = "ETH"
-    geminiEth.price = 200.00
-    geminiEth.withdrawFee = 1
-    geminiEth.exchangeFee = getExchangeFee(geminiEth.name)
-    geminiEth.depoositFee = 1
-
+  
+    # GDAX ethereum (ETH) exchange info.
+    gdaxEth = getExchange('gdax', 'ETH')
+    # Gemini ethereum (ETH) exchange info.
+    geminiEth = getExchange('gemini', 'ETH')
     # Check opportunities for ethereum.
     oppEth = checkOpportunity(amount, gdaxEth, geminiEth)
     
-    # Litecoin (LTC)
-    # GDAX litecoin exchange info.
-    gdaxLtc = Exchange()
-    gdaxLtc.name = "gdax"
-    gdaxLtc.currency = "LTC"
-    gdaxLtc.price = 350.00
-    gdaxLtc.withdrawFee = 2
-    gdaxLtc.exchangeFee = getExchangeFee(gdaxLtc.name)
-    gdaxLtc.depositFee = 1
-
-    # Gemini litecoin exchange info.
-    geminiLtc = Exchange()
-    geminiLtc.name = "gemini"
-    geminiLtc.currency = "LTC"
-    geminiLtc.price = 300.00
-    geminiLtc.withdrawFee = 1
-    geminiLtc.exchangeFee = getExchangeFee(geminiLtc.name)
-    geminiLtc.depoositFee = 1
-
+    # GDAX litecoin (LTC) exchange info.
+    gdaxLtc = getExchange('gdax', 'LTC')
+    # Gemini litecoin (LTC) exchange info.
+    geminiLtc = getExchange('gemini', 'LTC')
     # Check opportunities for litecoin.
     oppLtc = checkOpportunity(amount, gdaxLtc, geminiLtc)
     
-    # Bitcoin Core (BTC)
-    # GDAX BTC exchange info.
-    gdaxBtc = Exchange()
-    gdaxBtc.name = "gdax"
-    gdaxBtc.currency = "BTC"
-    gdaxBtc.price = 450.00
-    gdaxBtc.withdrawFee = 2
-    gdaxBtc.exchangeFee = getExchangeFee(gdaxBtc.name)
-    gdaxBtc.depositFee = 1
-
-    # Gemini BTC exchange info.
-    geminiBtc = Exchange()
-    geminiBtc.name = "gemini"
-    geminiBtc.currency = "BTC"
-    geminiBtc.price = 400.00
-    geminiBtc.withdrawFee = 1
-    geminiBtc.exchangeFee = getExchangeFee(geminiBtc.name)
-    geminiBtc.depoositFee = 1
-
+    # GDAX Bitcoin Core (BTC) exchange info.
+    gdaxBtc = getExchange('gdax', 'BTC')
+    # Gemini Bitcoin Core (BTC) exchange info.
+    geminiBtc = getExchange('gemini', 'BTC')
     # Check opportunities for litecoin.
     oppBtc = checkOpportunity(amount, gdaxBtc, geminiBtc)
     
     # Return array of arbitrage opportunities.
     arbOpps = [oppBch, oppEth, oppLtc, oppBtc]
     return arbOpps
+##############################################################
+
+# Returns currency info at a given exchange.
+def getExchange(xchg, curr):
+    exchgInfo = Exchange()
+    exchgInfo.name = xchg
+    exchgInfo.currency = curr
+    exchgInfo.price = getPrice(xchg, curr)
+    exchgInfo.depositFee = getDepositFee(xchg, curr)
+    exchgInfo.withdrawFee = getWithdrawFee(xchg, curr)
+    exchgInfo.exchangeFee = getExchangeFee(xchg, curr)
+    return exchgInfo
+################################################################   
+
+# Returns price of a currency at a given exchange.
+def getPrice(xchg, curr):
+    
+    price = 0.00
+    # Gdax pricing
+    if xchg == 'gdax':
+        if curr == 'BCH':
+            price = 650.00
+        elif curr == 'ETH':
+            price = 200.00
+        elif curr == 'LTC':
+            price = 350.00
+        elif curr == 'BTC':
+            price = 400.00
+    # Gemini pricing
+    elif xchg == 'gemini':
+        if curr == 'BCH':
+            price = 636.00
+        elif curr == 'ETH':
+            price = 250.00
+        elif curr == 'LTC':
+            price = 300.00
+        elif curr == 'BTC':
+            price = 450.00
+    return price
+#######################################################
+
+# Returns deposit fee for a currency at a given exchange.
+def getDepositFee(xchg, curr):
+    
+    fee = 0
+    if xchg == 'gdax':
+        if curr == 'BCH':
+            fee = 1
+        elif curr == 'ETH':
+            fee = 2
+        elif curr == 'LTC':
+            fee = 3
+        elif curr == 'BTC':
+            fee = 4
+    elif xchg == 'gemini':
+        if curr == 'BCH':
+            fee = 1
+        elif curr == 'ETH':
+            fee = 2
+        elif curr == 'LTC':
+            fee = 3
+        elif curr == 'BTC':
+            fee = 4
+    return fee
+###################################################
+
+# Returns withdraw fee for a currency at a given exchange.
+def getWithdrawFee(xchg, curr):
+    fee = 0
+    if xchg == 'gdax':
+        if curr == 'BCH':
+            fee = 2
+        elif curr == 'ETH':
+            fee = 2
+        elif curr == 'LTC':
+            fee = 3
+        elif curr == 'BTC':
+            fee = 4
+    elif xchg == 'gemini':
+        if curr == 'BCH':
+            fee = 1
+        elif curr == 'ETH':
+            fee = 2
+        elif curr == 'LTC':
+            fee = 3
+        elif curr == 'BTC':
+            fee = 4
+    return fee
+
+########################################################
+# Returns exchange fee for a given currency.
+def getExchangeFee(exchange, curr):
+    
+    if exchange is "gdax":
+        if curr == 'BCH':
+            fee = 1.0
+        elif curr == 'ETH':
+            fee = 2.0
+        elif curr == 'LTC':
+            fee = 3.0
+        elif curr == 'BTC':
+            fee = 4.0
+    elif exchange is "gemini":
+        if curr == 'BCH':
+            fee = 0.5
+        elif curr == 'ETH':
+            fee = 0.6
+        elif curr == 'LTC':
+            fee = 0.7
+        elif curr == 'BTC':
+            fee = 0.8
+    return fee
+########################################################

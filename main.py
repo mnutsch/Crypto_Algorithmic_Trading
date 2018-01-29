@@ -2,6 +2,7 @@
 import time
 import readExchangeRatesGDAX
 import readExchangeRatesGemini
+import configuration
 
 INTERVAL = 60 # seconds
 

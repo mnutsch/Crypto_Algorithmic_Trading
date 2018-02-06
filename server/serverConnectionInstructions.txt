@@ -1,0 +1,12 @@
+Server Connection Instructions
+Author: Matt Nutsch
+Date: 2-5-2018
+
+If you are using PuTTY to connect from Windows:
+1. Put the host name in the host name field. 
+2. Expand SSH
+3. Click Auth
+4. Under Private Key for Authentication, click Browse and select the keyfile.
+5. Click Open.
+6. When prompted, type in the Username.
+7. When prompted, type in the passphrase for key.

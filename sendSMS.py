@@ -11,10 +11,11 @@
 #sendSMSMessage(tropoNumberToDial, tropoMsg);
 
 import urllib, json, time
+import os
 
 #DEV NOTE: Replace these with values read from the configuration.py file.
-tropoAPIToken = "11111111111111111111111111111111111111111111111"
-tropoSMSAuth = "22222222222222"
+tropoAPIToken = os.getenv('TROPO_API_TOKEN')
+tropoSMSAuth = os.getenv('TROPO_SMS_AUTH')
 
 def sendSMSMessage(phoneNumberToText, messageToSend):
 

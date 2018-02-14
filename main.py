@@ -3,9 +3,14 @@ import time
 import readExchangeRatesGDAX
 import readExchangeRatesGemini
 import configuration
+import sendSMS
+import urllib
 
 INTERVAL = 60 # seconds
 
+
+PHONE_NUMBERS = ['14696488502']
+THRESHHOLD = 500
 
 
 def get_all_rates():
@@ -34,16 +39,15 @@ def main():
         # Analyze the rates to check for opportunities
         print '\nAnalyzing the rates...'
         diff = BTCToUSDFromGDAX - BTCToUSDFromGemini
-        print 'Diff: {}'.format(diff)
+        print 'Diff: {}'.format(abs(diff))
 
         # now lets check the abs diff between the two
-        if abs(diff) >= 50.0:
-            print '\t!!!! HELLO OPPORTUNITY WORLD!!!!!'
-
-
-        # Notify if opportunities exist
-        print '\nIf opportunities exist...'
-        print 'I will call sendSMS()'
+        if abs(diff) >= THRESHHOLD:
+            for phone in PHONE_NUMBERS:
+                message = 'GDAX price: {} Gemini price: {}'.format(BTCToUSDFromGDAX, BTCToUSDFromGemini)
+                message = urllib.quote_plus(message)
+                print message
+                sendSMS.sendSMSMessage(phone, message)
 
         # Wait for some specified interval
         # Repeat step one

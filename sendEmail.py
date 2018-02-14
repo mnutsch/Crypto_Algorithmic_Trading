@@ -9,16 +9,16 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 # Message headers
-fromaddr = "cry0algotrading@gmail.com"
-toaddr = "mullanep@oregonstate.edu"
+fromaddr = "[sending email]"
+toaddr = "[receiving email]"
 msg = MIMEMultipart()
 msg['From'] = fromaddr
 msg['To'] = toaddr
 msg['Subject'] = "CryO Opportunity"
 
-toaddr = "mullanep@oregonstate.edu"
-fromaddr = "cry0algotrading@gmail.com"
-password = "agua467cate"
+toaddr = "[receiving email]"
+fromaddr = "[sending email]"
+password = "[password]"
 
 # Initiate server
 def initServer(fromaddr, password):

@@ -2,7 +2,7 @@
 # Name: checkForSingleCurrencyOpps.py
 # Author: Patrick Mullaney
 # Date Created: 1-20-2018
-# Last Edited: 2-4-2018
+# Last Edited: 2-14-2018
 # Description: This script checks for single currency arbitrage opportunities.
 
 #### Review: GEMINI does not support LTC/BCH
@@ -38,6 +38,23 @@ def calcRev1(amount, lowPrice, highPrice, exchangeCostLow, exchangeCostHigh, dep
 def calcRev2(amount, lowPrice, highPrice, exchangeFeeLow, exchangeFeeHigh):
     revenue = (amount * highPrice * exchangeFeeHigh) - (amount * lowPrice * exchangeFeeLow)
     return revenue
+
+# Same results as calcRev1, just easier to read and prints out for debugging.
+def calcRev3(amount, lowPrice, highPrice, exchangeFeeLow, exchangeFeeHigh, depositCost, withdrawCost):
+    '''
+    print "Amount: ", amount
+    print "Low Price: ", lowPrice
+    print "High Price: ", highPrice
+    print "exchangeLow: ", exchangeFeeLow
+    print "exchangeHigh: ", exchangeFeeHigh
+    print "dep cost: ", depositCost
+    print "withdrawCost: ", withdrawCost
+    '''
+    revenue = (amount * lowPrice) * depositCost
+    revenue = revenue/lowPrice * exchangeFeeLow
+    revenue = revenue * highPrice * exchangeFeeHigh
+    revenue = revenue * withdrawCost
+    return revenue
  
 # Takes the amount of coins, information about the high-price exchange, low-price exchange, and returns info about arbitrage opportunity.
 def calculateProfitLoss(amount, high, low):
@@ -56,12 +73,10 @@ def calculateProfitLoss(amount, high, low):
     # Calculate revenue.
     # Original->  revenue = ((((amount * low.price) * depositCost)/low.price * exchangeCostLow) * high.price * exchangeCostHigh) * withdrawCost
     revenue = calcRev1(amount, low.price, high.price, exchangeCostLow, exchangeCostHigh, depositCost, withdrawCost)
-    # revenue = calcRev2(amount, low.price, high.price, exchangeCostLow, exchangeCostHigh)
     
     # Profit/loss = revenue - investment.
     profit = revenue - (low.price * amount)
     # Round down to two decimals.
-    # profit = '${:,.2f}'.format(profit) <- converted to string.
     profit = float('%.2f'%(profit))
     # Create opportunity object
     arbitrage = Opportunity()
@@ -77,7 +92,7 @@ def calculateProfitLoss(amount, high, low):
     return arbitrage
 ###########################################################################
 
-# Checks for an arbitrage opportunity for a given a mount between exchanges.
+# Checks for an arbitrage opportunity for a given amount between exchanges.
 def checkOpportunity(amount, gdax, gemini):
     
     # Set max opportunity amount to arbitrary negative number
@@ -110,7 +125,7 @@ def checkOpportunity(amount, gdax, gemini):
 ###################################################################
 
 # Calculates arbitrage opportunities for all currencies at exchanges.
-def checkAllCurrencies():
+def checkAllCurrencies(amount):
     # Optimize amounts?
     amount = 100
     
@@ -166,49 +181,39 @@ def getPrice(xchg, curr):
     # Gdax pricing
     if xchg == 'gdax':
         if curr == 'BCH':
-            price = 650.00
+            price = float(readExchangeRatesGDAX.getBCHToUSDFromGDAX())
         elif curr == 'ETH':
-            #price = 200.00
             price = float(readExchangeRatesGDAX.getETHToUSDFromGDAX())
         elif curr == 'LTC':
-            price = 350.00
+            price = float(readExchangeRatesGDAX.getLTCToUSDFromGDAX())
         elif curr == 'BTC':
             price = float(readExchangeRatesGDAX.getBTCToUSDFromGDAX())
     # Gemini pricing
     elif xchg == 'gemini':
-        if curr == 'BCH':
-            price = 636.00
+        if curr == 'BTC':
+            price = float(readExchangeRatesGemini.getBTCToUSDFromGemini())
         elif curr == 'ETH':
             price = float(readExchangeRatesGemini.getETHToUSDFromGemini())
-        elif curr == 'LTC':
-            price = 300.00
-        elif curr == 'BTC':
-            price = float(readExchangeRatesGemini.getBTCToUSDFromGemini())
     return price
 #######################################################
 
 # Returns deposit % fee for a currency at a given exchange.
 def getDepositFee(xchg, curr):
-    
     fee = 0
     if xchg == 'gdax':
         if curr == 'BCH':
-            fee = 1
+            fee = 0.00
         elif curr == 'ETH':
-            fee = 0.001
+            fee = 0.00
         elif curr == 'LTC':
-            fee = 3
+            fee = 0.00
         elif curr == 'BTC':
-            fee = 0.001
+            fee = 0.00
     elif xchg == 'gemini':
-        if curr == 'BCH':
-            fee = 1
+        if curr == 'BTC':
+            fee = 0.00
         elif curr == 'ETH':
-            fee = 0.001
-        elif curr == 'LTC':
-            fee = 3
-        elif curr == 'BTC':
-            fee = 0.001
+            fee = 0.00
     return fee
 ###################################################
 
@@ -217,22 +222,20 @@ def getWithdrawFee(xchg, curr):
     fee = 0
     if xchg == 'gdax':
         if curr == 'BCH':
-            fee = 2
+            fee = 0.00
         elif curr == 'ETH':
-            fee = 2
+            fee = 0.00
         elif curr == 'LTC':
-            fee = 3
+            fee = 0.00
         elif curr == 'BTC':
-            fee = 2
+            fee = 0.00
     elif xchg == 'gemini':
-        if curr == 'BCH':
-            fee = 1
+        if curr == 'BTC':
+            #fee = 1.002
+            fee = 0.00
         elif curr == 'ETH':
-            fee = 2
-        elif curr == 'LTC':
-            fee = 3
-        elif curr == 'BTC':
-            fee = 2
+           # fee = 1.001
+            fee = 0.00
     return fee
 
 ########################################################
@@ -243,19 +246,15 @@ def getExchangeFee(exchange, curr):
         if curr == 'BCH':
             fee = 0.25
         elif curr == 'ETH':
-            fee = 0.25
+            fee = 0.3
         elif curr == 'LTC':
             fee = 0.3
         elif curr == 'BTC':
             fee = 0.25
     elif exchange is "gemini":
-        if curr == 'BCH':
-            fee = 0.5
-        elif curr == 'ETH':
+        if curr == 'BTC':
             fee = 0.25
-        elif curr == 'LTC':
-            fee = 0.7
-        elif curr == 'BTC':
+        elif curr == 'ETH':
             fee = 0.25
     return fee
 ########################################################

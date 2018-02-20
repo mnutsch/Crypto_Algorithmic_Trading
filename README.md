@@ -7,7 +7,7 @@ We will create a cryptocurrency wallet app with the ability to perform algorithm
 
 The app will repeatedly query the various exchanges rates between cryptocurrencies. If it finds a situation where the exchange rates are not consistent, then it automatic executes a trade. In other words, create a bot which finds arbitrage opportunities between different crypto-currencies.
 
-For example, the app will check the USD exchange rate for BCH at exchange A and the exchange rate for BCH at exchange B. If the associated fees are less than the difference in price, then the app will automatically execute a trade.
+For example, the app will check the USD exchange rate for Bitcoin at exchange A and the exchange rate for Bitcoin at exchange B. If the associated fees are less than the difference in price, then the app will automatically execute a trade.
 
 Team Members:<br/>
 <ul><li>Matt Nutsch</li>

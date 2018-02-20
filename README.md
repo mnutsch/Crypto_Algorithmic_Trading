@@ -14,8 +14,9 @@ Team Members:<br/>
 <li>Patrick Mullaney</li>
 <li>Tim Bramlett</li></ul>
 
-See the document "CRY0 - Original Project Plan.pdf" for the original project plan.
-See the document "CRY0 - Mid Point Project Check.pdf" for a mid point status update on the project. 
+Documentation:<br/>
+"CRY0 - Original Project Plan.pdf" for the original project plan.<br/>
+"CRY0 - Mid Point Project Check.pdf" for a mid point status update on the project.<br/>
 
 Check out the video at this URL for a short video update on the mid point status of the project.
 https://media.oregonstate.edu/media/t/0_gpfirjd4

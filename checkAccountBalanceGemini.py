@@ -5,9 +5,9 @@
 # Description: This script reads the balance of an account from the exchange Gemini.
 
 #DEV NOTE: CHANGE THESE TO READ FROM THE CONFIGURATION FILE
-myAPIKey = "pjgeiHHmzo5SPpB5ccZD"
-myAPISecret = "2CH92bBS6pLJ9GfZRXAJ6H49maEm"
-myNonce = 123471 #note: increase the myNonce value by 1 for each API call
+myAPIKey = "aaaaaaaaaa1aaaa1aaaa"
+myAPISecret = "1aa11aaa1aaa1aaaaaaa1a11aaaa"
+myNonce = 123473 #note: increase this value by 1 for each API call (by 2 if calling twice per run)
 
 import hashlib
 import requests

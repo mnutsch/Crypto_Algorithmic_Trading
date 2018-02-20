@@ -11,10 +11,10 @@
 #   easy_install requests
 
 #DEV NOTE: CHANGE THESE TO READ FROM THE CONFIGURATION FILE
-myAPIKey = "2002f933df96906eb2b0910540cf2d8e"
-mySecretKey = "z0rBdrt2QcI0FYoWyki9kZmWUikmbi7NwgiwxxMq/eX8eGJ3o9WPrdRwg+V2FAcRvyDjo6+BYNpjRiJRYYvQow=="
-myPassphrase = "ncuj8hb46ni5"
-myBTCAccountID = "89c07d6a-f355-4991-9104-013157820101"
+myAPIKey = "1111a111aa11111aa1a1111111aa1a1a"
+mySecretKey = "a1aaaaa1aaa1aaaaaaa1aaaaaaaaaa1aaaaaaaaa/aa1aaa1a1aaaaaaa+a1aaaaaaaaa1+aaaaaaaaaaaaaaa=="
+myPassphrase = "aaaa1aa11aa1"
+myBTCAccountID = "11a11a1a-a111-1111-1111-111111111111"
 myETHAccountID = "11a11a1a-a111-1111-1111-111111111111"
 
 import json, hmac, hashlib, time, requests, base64

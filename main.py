@@ -6,6 +6,7 @@ import configuration
 import sendSMS
 import urllib
 import sendEmail
+import os
 
 INTERVAL = 60 # seconds
 

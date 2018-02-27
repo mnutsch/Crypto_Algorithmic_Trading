@@ -7,6 +7,7 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import os
 
 # Message headers
 fromaddr = "[sending email]"
@@ -17,8 +18,8 @@ msg['To'] = toaddr
 msg['Subject'] = "CryO Opportunity"
 
 toaddr = "[receiving email]"
-fromaddr = ""
-password = ""
+fromaddr = os.getenv('GMAIL_EMAIL')
+password = os.getenv('GMAIL_PW')
 
 # Initiate server
 def initServer(fromaddr, password):

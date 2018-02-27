@@ -9,8 +9,7 @@ import urllib
 INTERVAL = 60 # seconds
 
 PHONE_NUMBERS = ['14696488502', '12539612914']
-THRESHHOLD = 200
-
+THRESHHOLD = 500
 
 def get_all_rates():
     """TODO: If we decide we need it"""

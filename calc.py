@@ -1,13 +1,23 @@
-##!/usr/bin/python
-# Name: checkForSingleCurrencyOpps.py
+# Name: calc.py
 # Author: Patrick Mullaney
-# Date Created: 1-20-2018
-# Last Edited: 2-14-2018
-# Description: This script checks for single currency arbitrage opportunities.
+# Date Created: 2-8-2018
+# Last Edited: 2-17-2018
+# Description: This script checks contains calculation functions that can
+# be used by checkSingleCurrencyOpps.py and checkMultipleCurrencyOpps.py.
 
 #### Review: GEMINI does not support LTC/BCH
 
 import readExchangeRatesGDAX, readExchangeRatesGemini
+
+# Number of pairwise comparisons = n(n-1)/2, for N = 12, comparisons = 66.
+
+# Compares 3 currency conversion costs and returns true if there is a potentially profitable chain.  
+# Example use: if ([BTC to ETH] > [ETH to LTC]) and ([LTC to BTC] < [ETH to LTC]), then buy ETH with BTC, buy LTC with ETH and buy BTC with LTC. 
+def checkThree(cost1, cost2, cost3):
+    if(cost1 > cost2) and (cost3 < cost2):
+        return True
+    else:
+        return False
 
 # Opportunity object stores the potential info about an exchange.
 class Opportunity():
@@ -38,23 +48,6 @@ def calcRev1(amount, lowPrice, highPrice, exchangeCostLow, exchangeCostHigh, dep
 def calcRev2(amount, lowPrice, highPrice, exchangeFeeLow, exchangeFeeHigh):
     revenue = (amount * highPrice * exchangeFeeHigh) - (amount * lowPrice * exchangeFeeLow)
     return revenue
-
-# Same results as calcRev1, just easier to read and prints out for debugging.
-def calcRev3(amount, lowPrice, highPrice, exchangeFeeLow, exchangeFeeHigh, depositCost, withdrawCost):
-    '''
-    print "Amount: ", amount
-    print "Low Price: ", lowPrice
-    print "High Price: ", highPrice
-    print "exchangeLow: ", exchangeFeeLow
-    print "exchangeHigh: ", exchangeFeeHigh
-    print "dep cost: ", depositCost
-    print "withdrawCost: ", withdrawCost
-    '''
-    revenue = (amount * lowPrice) * depositCost
-    revenue = revenue/lowPrice * exchangeFeeLow
-    revenue = revenue * highPrice * exchangeFeeHigh
-    revenue = revenue * withdrawCost
-    return revenue
  
 # Takes the amount of coins, information about the high-price exchange, low-price exchange, and returns info about arbitrage opportunity.
 def calculateProfitLoss(amount, high, low):
@@ -73,6 +66,7 @@ def calculateProfitLoss(amount, high, low):
     # Calculate revenue.
     # Original->  revenue = ((((amount * low.price) * depositCost)/low.price * exchangeCostLow) * high.price * exchangeCostHigh) * withdrawCost
     revenue = calcRev1(amount, low.price, high.price, exchangeCostLow, exchangeCostHigh, depositCost, withdrawCost)
+    # revenue = calcRev2(amount, low.price, high.price, exchangeCostLow, exchangeCostHigh)
     
     # Profit/loss = revenue - investment.
     profit = revenue - (low.price * amount)
@@ -124,44 +118,6 @@ def checkOpportunity(amount, gdax, gemini):
         return None
 ###################################################################
 
-# Calculates arbitrage opportunities for all currencies at exchanges.
-def checkAllCurrencies(amount):
-    # Optimize amounts?
-    amount = 100
-    
-    # GDAX Bitcoin Cash (BCH) exchange info.
-    gdaxBch = getExchange('gdax', 'BCH')
-    # Gemini Bitcoin Cash (BCH) exchange info.
-    geminiBch = getExchange('gemini', 'BCH')
-    # Check opportunities for bitcoin.
-    oppBch = checkOpportunity(amount, gdaxBch, geminiBch)
-  
-    # GDAX ethereum (ETH) exchange info.
-    gdaxEth = getExchange('gdax', 'ETH')
-    # Gemini ethereum (ETH) exchange info.
-    geminiEth = getExchange('gemini', 'ETH')
-    # Check opportunities for ethereum.
-    oppEth = checkOpportunity(amount, gdaxEth, geminiEth)
-    
-    # GDAX litecoin (LTC) exchange info.
-    gdaxLtc = getExchange('gdax', 'LTC')
-    # Gemini litecoin (LTC) exchange info.
-    geminiLtc = getExchange('gemini', 'LTC')
-    # Check opportunities for litecoin.
-    oppLtc = checkOpportunity(amount, gdaxLtc, geminiLtc)
-    
-    # GDAX Bitcoin Core (BTC) exchange info.
-    gdaxBtc = getExchange('gdax', 'BTC')
-    # Gemini Bitcoin Core (BTC) exchange info.
-    geminiBtc = getExchange('gemini', 'BTC')
-    # Check opportunities for litecoin.
-    oppBtc = checkOpportunity(amount, gdaxBtc, geminiBtc)
-    
-    # Return array of arbitrage opportunities.
-    arbOpps = [oppBch, oppEth, oppLtc, oppBtc]
-    return arbOpps
-##############################################################
-
 # Returns currency info at a given exchange.
 def getExchange(xchg, curr):
     exchgInfo = Exchange()
@@ -176,8 +132,7 @@ def getExchange(xchg, curr):
 
 # Returns price of a currency at a given exchange.
 def getPrice(xchg, curr):
-    
-    price = 0.00
+    #price = 0.00
     # Gdax pricing
     if xchg == 'gdax':
         if curr == 'BCH':
@@ -199,21 +154,22 @@ def getPrice(xchg, curr):
 
 # Returns deposit % fee for a currency at a given exchange.
 def getDepositFee(xchg, curr):
+    
     fee = 0
     if xchg == 'gdax':
         if curr == 'BCH':
             fee = 0.00
         elif curr == 'ETH':
-            fee = 0.00
+            fee = 0.001
         elif curr == 'LTC':
             fee = 0.00
         elif curr == 'BTC':
-            fee = 0.00
+            fee = 0.001
     elif xchg == 'gemini':
         if curr == 'BTC':
-            fee = 0.00
+            fee = 0.001
         elif curr == 'ETH':
-            fee = 0.00
+            fee = 0.001
     return fee
 ###################################################
 
@@ -246,15 +202,12 @@ def getExchangeFee(exchange, curr):
         if curr == 'BCH':
             fee = 0.25
         elif curr == 'ETH':
-            fee = 0.3
+            fee = 0.25
         elif curr == 'LTC':
             fee = 0.3
         elif curr == 'BTC':
             fee = 0.25
     elif exchange is "gemini":
-        if curr == 'BTC':
-            fee = 0.25
-        elif curr == 'ETH':
             fee = 0.25
     return fee
 ########################################################

@@ -17,8 +17,8 @@ msg['To'] = toaddr
 msg['Subject'] = "CryO Opportunity"
 
 toaddr = "[receiving email]"
-fromaddr = "[sending email]"
-password = "[password]"
+fromaddr = "crypto.algorithmic.trading@gmail.com"
+password = "thisprojectrocks"
 
 # Initiate server
 def initServer(fromaddr, password):

@@ -5,11 +5,14 @@ import readExchangeRatesGemini
 import configuration
 import sendSMS
 import urllib
+import sendEmail
 
 INTERVAL = 60 # seconds
 
 PHONE_NUMBERS = ['14696488502', '12539612914']
 THRESHHOLD = 500
+
+sendEmail.sendSingleEmail('timothy.bramlett@gmail.com', 'main.py starting up...')
 
 def get_all_rates():
     """TODO: If we decide we need it"""
@@ -43,6 +46,7 @@ def main():
         if abs(diff) >= THRESHHOLD:
             for phone in PHONE_NUMBERS:
                 message = 'GDAX price: {} Gemini price: {}'.format(BTCToUSDFromGDAX, BTCToUSDFromGemini)
+                sendEmail.sendSingleEmail('timothy.bramlett@gmail.com', message)
                 message = urllib.quote_plus(message)
                 print message
                 sendSMS.sendSMSMessage(phone, message)

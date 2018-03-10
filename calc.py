@@ -1,13 +1,12 @@
 # Name: calc.py
 # Author: Patrick Mullaney
 # Date Created: 2-8-2018
-# Last Edited: 2-17-2018
+# Last Edited: 3-10-2018
 # Description: This script checks contains calculation functions that can
 # be used by checkSingleCurrencyOpps.py and checkMultipleCurrencyOpps.py.
 
-#### Review: GEMINI does not support LTC/BCH
-
 import readExchangeRatesGDAX, readExchangeRatesGemini
+import currency
 
 # Number of pairwise comparisons = n(n-1)/2, for N = 12, comparisons = 66.
 
@@ -18,73 +17,74 @@ def checkThree(cost1, cost2, cost3):
         return True
     else:
         return False
+################################################################################
 
 # Opportunity object stores the potential info about an exchange.
 class Opportunity():
-    currency = None
+    buyCurrency = None
+    sellCurrency = None
     buyExchange = None
     sellExchange = None
     buyPrice = None
     sellPrice = None
     amount = None
     profitLoss = 0.00
-
-# Exchange object contains information relevant to that exchange.    
-class Exchange(): 
-    name = None
-    currency = None
-    price = None
-    depositFee = None
-    withdrawFee = None
-    exchangeFee = None
-    # Add different fees for maker/taker?
+    
+################################################################################
 
 # Calculates revenue with deposit and withdraw fee costs.
 def calcRev1(amount, lowPrice, highPrice, exchangeCostLow, exchangeCostHigh, depositCost, withdrawCost):
     revenue = ((amount * lowPrice) * depositCost)/lowPrice * exchangeCostLow * highPrice * exchangeCostHigh * withdrawCost
     return revenue
-    
-# Calculates revenue without deposit and withdraw fee costs.
-def calcRev2(amount, lowPrice, highPrice, exchangeFeeLow, exchangeFeeHigh):
-    revenue = (amount * highPrice * exchangeFeeHigh) - (amount * lowPrice * exchangeFeeLow)
+################################################################################
+
+# Calculates revenue for multiple arbitrage opportunity (different currencies/exchanges possible).
+def calcRev2(amount, sellPrice, buyPrice):
+    amountToSell = amount/sellPrice
+    sellValue = amountToSell * sellPrice
+    amountToBuy = sellValue/buyPrice
+    buyValue = amountToBuy * buyPrice
+    revenue = buyValue - sellValue
     return revenue
+ 
+ ################################################################################
  
 # Takes the amount of coins, information about the high-price exchange, low-price exchange, and returns info about arbitrage opportunity.
 def calculateProfitLoss(amount, high, low):
-        
+    #print "48 calc amt: {}, curr1: {}, curr2: {}".format(str(amount),str(high.name), str(low.name))
     # Fiat deposit fee in %.
     depositCost = float(100.00 - low.depositFee)/100.00
- 
     # Exchange fee of lower currency in %.
     exchangeCostLow = float(100.00 - low.exchangeFee)/100.00
     # Exchange fee of higher currency in %.
     exchangeCostHigh = float(100.00 - high.exchangeFee)/100.00
-   
     # Fiat withdrawal fee in %.
     withdrawCost = float(100.00 - high.withdrawFee)/100.00
   
     # Calculate revenue.
     # Original->  revenue = ((((amount * low.price) * depositCost)/low.price * exchangeCostLow) * high.price * exchangeCostHigh) * withdrawCost
     revenue = calcRev1(amount, low.price, high.price, exchangeCostLow, exchangeCostHigh, depositCost, withdrawCost)
-    # revenue = calcRev2(amount, low.price, high.price, exchangeCostLow, exchangeCostHigh)
+    #revenue = calcRev2(amount, low.price, high.price)
     
     # Profit/loss = revenue - investment.
     profit = revenue - (low.price * amount)
     # Round down to two decimals.
     profit = float('%.2f'%(profit))
+    
     # Create opportunity object
     arbitrage = Opportunity()
-    arbitrage.currency = high.currency
-    arbitrage.buyExchange = low.name
-    arbitrage.sellExchange = high.name
+    arbitrage.sellCurrency = high.name
+    arbitrage.buyCurrency = low.name
+    arbitrage.buyExchange = low.exchange
+    arbitrage.sellExchange = high.exchange
     arbitrage.profitLoss = profit
     arbitrage.sellPrice = '${:,.2f}'.format(high.price)
     arbitrage.buyPrice = '${:,.2f}'.format(low.price)
     arbitrage.amount = amount
-    # Optimize by include exchange prices/fees?
     
     return arbitrage
-###########################################################################
+    
+################################################################################
 
 # Checks for an arbitrage opportunity for a given amount between exchanges.
 def checkOpportunity(amount, gdax, gemini):
@@ -116,98 +116,17 @@ def checkOpportunity(amount, gdax, gemini):
     # Else prices equal, no arbitrage opportunity.
     elif gdax.price == gemini.price:
         return None
-###################################################################
+################################################################################
 
-# Returns currency info at a given exchange.
-def getExchange(xchg, curr):
-    exchgInfo = Exchange()
-    exchgInfo.name = xchg
-    exchgInfo.currency = curr
-    exchgInfo.price = getPrice(xchg, curr)
-    exchgInfo.depositFee = getDepositFee(xchg, curr)
-    exchgInfo.withdrawFee = getWithdrawFee(xchg, curr)
-    exchgInfo.exchangeFee = getExchangeFee(xchg, curr)
-    return exchgInfo
-################################################################   
-
-# Returns price of a currency at a given exchange.
-def getPrice(xchg, curr):
-    #price = 0.00
-    # Gdax pricing
-    if xchg == 'gdax':
-        if curr == 'BCH':
-            price = float(readExchangeRatesGDAX.getBCHToUSDFromGDAX())
-        elif curr == 'ETH':
-            price = float(readExchangeRatesGDAX.getETHToUSDFromGDAX())
-        elif curr == 'LTC':
-            price = float(readExchangeRatesGDAX.getLTCToUSDFromGDAX())
-        elif curr == 'BTC':
-            price = float(readExchangeRatesGDAX.getBTCToUSDFromGDAX())
-    # Gemini pricing
-    elif xchg == 'gemini':
-        if curr == 'BTC':
-            price = float(readExchangeRatesGemini.getBTCToUSDFromGemini())
-        elif curr == 'ETH':
-            price = float(readExchangeRatesGemini.getETHToUSDFromGemini())
-    return price
-#######################################################
-
-# Returns deposit % fee for a currency at a given exchange.
-def getDepositFee(xchg, curr):
-    
-    fee = 0
-    if xchg == 'gdax':
-        if curr == 'BCH':
-            fee = 0.00
-        elif curr == 'ETH':
-            fee = 0.001
-        elif curr == 'LTC':
-            fee = 0.00
-        elif curr == 'BTC':
-            fee = 0.001
-    elif xchg == 'gemini':
-        if curr == 'BTC':
-            fee = 0.001
-        elif curr == 'ETH':
-            fee = 0.001
-    return fee
-###################################################
-
-# Returns withdraw fee for a currency at a given exchange.
-def getWithdrawFee(xchg, curr):
-    fee = 0
-    if xchg == 'gdax':
-        if curr == 'BCH':
-            fee = 0.00
-        elif curr == 'ETH':
-            fee = 0.00
-        elif curr == 'LTC':
-            fee = 0.00
-        elif curr == 'BTC':
-            fee = 0.00
-    elif xchg == 'gemini':
-        if curr == 'BTC':
-            #fee = 1.002
-            fee = 0.00
-        elif curr == 'ETH':
-           # fee = 1.001
-            fee = 0.00
-    return fee
-
-########################################################
-# Returns exchange fee % for a given currency.
-def getExchangeFee(exchange, curr):
-    
-    if exchange is "gdax":
-        if curr == 'BCH':
-            fee = 0.25
-        elif curr == 'ETH':
-            fee = 0.25
-        elif curr == 'LTC':
-            fee = 0.3
-        elif curr == 'BTC':
-            fee = 0.25
-    elif exchange is "gemini":
-            fee = 0.25
-    return fee
-########################################################
+def multRevenue(curr1, curr2):
+    revenue = 0.00
+    depositCost = currency.getFeeCost(curr2, curr2.depositFee)
+    revenue = ((curr2.amount * curr2.price) * depositCost)/curr2.price
+    curr1XchgFee = currency.getFeeCost(curr1, curr1.exchangeFee)
+    revenue = revenue * curr1XchgFee 
+    revenue = revenue * curr1.price 
+    curr2XchgFee = currency.getFeeCost(curr2, curr2.exchangeFee)
+    revenue = revenue * curr2XchgFee
+    withdrawCost = currency.getFeeCost(curr1, curr1.withdrawFee)
+    revenue = revenue * withdrawCost
+    return revenue

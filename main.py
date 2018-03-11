@@ -7,6 +7,7 @@ import sendSMS
 import urllib
 import sendEmail
 import os
+import checkForSingleCurrencyOpps
 
 INTERVAL = 60 # seconds
 
@@ -25,32 +26,36 @@ def main():
 
     while True:
 
-        # Get the rates from all the exchanges
-        print '\n\nCalling readExchangeRatesGemini()'
-        print 'Calling readExchangeRatesGDAX'
+        result = checkForSingleCurrencyOpps.checkAllCurrencies(100)
 
-        BTCToUSDFromGDAX = float(readExchangeRatesGDAX.getBTCToUSDFromGDAX())
-        BTCToUSDFromGemini = float(readExchangeRatesGemini.getBTCToUSDFromGemini())
+        print result
+
+        # # Get the rates from all the exchanges
+        # print '\n\nCalling readExchangeRatesGemini()'
+        # print 'Calling readExchangeRatesGDAX'
+
+        # BTCToUSDFromGDAX = float(readExchangeRatesGDAX.getBTCToUSDFromGDAX())
+        # BTCToUSDFromGemini = float(readExchangeRatesGemini.getBTCToUSDFromGemini())
 
         
-        print ''
-        print 'BTCToUSDFromGDAX: {}'.format(BTCToUSDFromGDAX) 
-        print 'BTCToUSDFromGemini: {}'.format(BTCToUSDFromGemini)
+        # print ''
+        # print 'BTCToUSDFromGDAX: {}'.format(BTCToUSDFromGDAX) 
+        # print 'BTCToUSDFromGemini: {}'.format(BTCToUSDFromGemini)
         
 
-        # Analyze the rates to check for opportunities
-        print '\nAnalyzing the rates...'
-        diff = BTCToUSDFromGDAX - BTCToUSDFromGemini
-        print 'Diff: {}'.format(abs(diff))
+        # # Analyze the rates to check for opportunities
+        # print '\nAnalyzing the rates...'
+        # diff = BTCToUSDFromGDAX - BTCToUSDFromGemini
+        # print 'Diff: {}'.format(abs(diff))
 
-        # now lets check the abs diff between the two
-        if abs(diff) >= THRESHHOLD:
-            for phone in PHONE_NUMBERS:
-                message = 'GDAX price: {} Gemini price: {}'.format(BTCToUSDFromGDAX, BTCToUSDFromGemini)
-                sendEmail.sendSingleEmail('timothy.bramlett@gmail.com', message)
-                message = urllib.quote_plus(message)
-                print message
-                sendSMS.sendSMSMessage(phone, message)
+        # # now lets check the abs diff between the two
+        # if abs(diff) >= THRESHHOLD:
+        #     for phone in PHONE_NUMBERS:
+        #         message = 'GDAX price: {} Gemini price: {}'.format(BTCToUSDFromGDAX, BTCToUSDFromGemini)
+        #         sendEmail.sendSingleEmail('timothy.bramlett@gmail.com', message)
+        #         message = urllib.quote_plus(message)
+        #         print message
+        #         sendSMS.sendSMSMessage(phone, message)
 
         # Wait for some specified interval
         # Repeat step one

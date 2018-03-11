@@ -1,11 +1,12 @@
 # Name: currency.py
 # Author: Patrick Mullaney
 # Date Created: 3-7-2018
-# Last Edited: 3-9-2018
+# Last Edited: 3-10-2018
 # Description: This file contains functions related to currencies, return a list of currencies, etc.
 
 # File for calculations.
 import calc
+import readExchangeRatesGDAX, readExchangeRatesGemini
 
 #*** Volume amounts are currently hardcoded test values to avoid any financial implications during development.
 
@@ -20,6 +21,11 @@ class Currency():
     depositFee = 0.00
     exchangeFee = 0.00
     withdrawFee = 0.00
+
+# From SO: https://stackoverflow.com/questions/5969806/print-all-properties-of-a-python-class- used for debug    
+def printCurr(curr):
+    attrs = vars(curr)
+    print ', '.join("%s: %s" % item for item in attrs.items())
 
 # Returns withdraw fee for a currency at a given exchange (original in single currency.py).
 def getWithdrawFee(xchg, curr):
@@ -66,7 +72,7 @@ def getExchangeFee(exchange, curr):
     volume = getUserVolume(curr)
     #print "65 calc:", exchange, curr, volume
     if exchange is "gdax":
-        # Get user percentage
+        # Gdax uses a volume percentage for fees, get user percentage.
         userVol = gdaxUserVol(curr, volume)
         #print "user vol: ", userVol
         if userVol >= 0.0 and userVol <= 1.0:
@@ -116,11 +122,44 @@ def getCurrency(name, exchange):
     curr.volume = getUserVolume(name)
     curr.name = name
     curr.exchange = exchange
-    curr.price = calc.getPrice(exchange, curr.name)
-    curr.depositFee = calc.getDepositFee(curr.name, exchange)
+    curr.price = getPrice(exchange, curr.name)
+    curr.depositFee = getDepositFee(exchange, curr.name)
     curr.exchangeFee = getExchangeFee(exchange, curr.name)
-    curr.withdrawFee = calc.getWithdrawFee(exchange, curr)
+    curr.withdrawFee = getWithdrawFee(exchange, curr.name)
     return curr
+    
+# Returns deposit % fee for a currency at a given exchange.
+def getDepositFee(xchg, curr):
+    if xchg == 'gdax':
+        if curr == 'BCH' or curr == 'LTC':
+            fee = 0.00
+        elif curr == 'ETH' or curr == 'BTC':
+            fee = 0.001
+    elif xchg == 'gemini':
+        fee = 0.001
+    else:
+        print "No match: ", xchg, curr
+    return fee
+###################################################
+# Returns price of a currency at a given exchange.
+def getPrice(xchg, curr):
+    # Gdax pricing
+    if xchg == 'gdax':
+        if curr == 'BCH':
+            price = float(readExchangeRatesGDAX.getBCHToUSDFromGDAX())
+        elif curr == 'ETH':
+            price = float(readExchangeRatesGDAX.getETHToUSDFromGDAX())
+        elif curr == 'LTC':
+            price = float(readExchangeRatesGDAX.getLTCToUSDFromGDAX())
+        elif curr == 'BTC':
+            price = float(readExchangeRatesGDAX.getBTCToUSDFromGDAX())
+    # Gemini pricing
+    elif xchg == 'gemini':
+        if curr == 'BTC':
+            price = float(readExchangeRatesGemini.getBTCToUSDFromGemini())
+        elif curr == 'ETH':
+            price = float(readExchangeRatesGemini.getETHToUSDFromGemini())
+    return price
 
 # Returns list of currency objects.
 def getCurrencyList():
@@ -140,4 +179,13 @@ def getCost(curr, amount):
     cost = (amount * curr.price * fee)/100.00
     #cost = (amount * curr.price) + currFee
     return cost
-    
+
+# Returns fiat deposit fee in %. - refactor this  
+def getDepositCost(curr):
+    depositCost = float(100.00 - curr.depositFee)/100.00
+    return depositCost
+
+# Returns cost of a % fee for a currency.
+def getFeeCost(curr, fee):
+    feeCost = float(100.00 - fee)/100.00
+    return feeCost

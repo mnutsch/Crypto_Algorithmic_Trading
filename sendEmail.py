@@ -1,7 +1,7 @@
 # Name: sendEmail.py
 # Author: Patrick Mullaney
 # Date Created: 1-28-2018
-# Last Edited: 2-13-2018
+# Last Edited: 3-11-2018
 # Description: This script sends emails notifying of potential arbitrage opportunities.
 
 import smtplib
@@ -17,11 +17,13 @@ msg['From'] = fromaddr
 msg['To'] = toaddr
 msg['Subject'] = "CryO Opportunity"
 
-toaddr = "[receiving email]"
+addressToSend = "[receiving email]"
 fromaddr = os.getenv('GMAIL_EMAIL')
 password = os.getenv('GMAIL_PW')
 
-# Initiate server
+################################################################################
+
+# Initiate server.
 def initServer(fromaddr, password):
     server = smtplib.SMTP('smtp.gmail.com', 587)  # change to osu? port?
     server.ehlo() # or .helo() for non ESMTP server?
@@ -30,6 +32,8 @@ def initServer(fromaddr, password):
     server.login(fromaddr, password)
     return server
 
+################################################################################
+
 # Set message headers
 def setHeader(fromaddr, toaddr):
 	msg = MIMEMultipart()
@@ -37,17 +41,22 @@ def setHeader(fromaddr, toaddr):
 	msg['To'] = toaddr
 	msg['Subject'] = "CryO Opportunity"
 	return msg
-	
+
+################################################################################
 # Init Server
 server = initServer(fromaddr, password)
 
-# Multiple currency notification should include the currencies in the transaction chain, 
-# each exchange rate pricing, fee pricing, and the estimated profit. 
-def sendMultipleEmail():
-    body = "Testing multiple currency email"
+################################################################################
+
+# Sends a notification email for multiple arbitrage opportunities.
+def sendMultipleEmail(addressToEmail, messageToSend):
+    body = messageToSend
+    #body = "Testing multiple currency email"
     msg.attach(MIMEText(body, 'plain'))
     text = msg.as_string()
-    server.sendmail(fromaddr, toaddr, text)
+    server.sendmail(fromaddr, addressToEmail, text)
+
+################################################################################
 
 # Send notification that includes the currency, each exchange rate pricing, fee pricing, and the estimated profit. 
 def sendSingleEmail(addressToEmail, messageToSend):
@@ -57,9 +66,9 @@ def sendSingleEmail(addressToEmail, messageToSend):
     text = msg.as_string()
     server.sendmail(fromaddr, addressToEmail, text)
 
-# Email exchange rate pricing and estimated profit
+################################################################################
+# Send email notification of exchange rate pricing and estimated profit.
 def sendSingleEmailTemplate(opp):
-	# fees needed?
     # Convert output to dollars + cents
     profitLoss = '${:,.2f}'.format(opp.profitLoss)
     body = "Arbitrage Opportunity:\n\nCurrency: "
@@ -72,3 +81,16 @@ def sendSingleEmailTemplate(opp):
     text = msg.as_string()
     server.sendmail(fromaddr, toaddr, text)
     
+################################################################################
+    
+# Returns a message template for multiple arbitrage opportunities.
+def multipleEmailTemplate(opps):
+    
+    body = "Multiple Arbitrage Opportunities:\n\n"
+    for i in opps:
+        body += "Starting amount: {}\n".format(i.startingAmount)
+        body += "{}\n".format(i.transactionChain)
+        # Convert output to dollars + cents
+        profitLoss = '${:,.2f}'.format(i.profitLoss)
+        body += "Profit/Loss: {}\n\n".format(profitLoss)
+    return body

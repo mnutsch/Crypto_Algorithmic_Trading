@@ -2,8 +2,8 @@
 
 
 # This is my exchange keys for Geminis Sandbox API
-API_KEY = 'AX1tbzYLU178pyIJ75M4'
-SECRET_KEY = '3tRZ1YhzghnFAXFiJx5fKBY5BPFS'
+API_KEY = ''
+SECRET_KEY = ''
 
 from geminipy import Geminipy
 

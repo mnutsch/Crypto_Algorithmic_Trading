@@ -4,16 +4,22 @@
 # Last Edited: 3-10-2018
 # Description: This file contains functions related to obtaining a chain of valid transactions.
 
-#*** Need to finish chain profit
 import calc, currency, conversions
 import itertools
 
+# Prints and returns a string for a chain of transactions. 
 def printChain(chain):
-    transactionChain = "Chain: "
+    transactionChain = "Transaction chain: "
     for i in chain:
         transactionChain += str(i.curr1.name)
+        transactionChain += str("(")
+        transactionChain += str(i.curr1.exchange)
+        transactionChain += str(")")
         transactionChain += str("->")
         transactionChain += str(i.curr2.name)
+        transactionChain += str("(")
+        transactionChain += str(i.curr2.exchange)
+        transactionChain += str(")")
         transactionChain += str(". ")
     print transactionChain
     # Return string
@@ -40,10 +46,12 @@ def getTransactionList(currencyList):
 
 # Returns a list of transaction chains up to 3 transactions each.
 def getTransactionChains(currencyList):
+    # Get list of transactions.
     transactions = getTransactionList(currencyList)
+    # Get permutations of transactions.
     comparePermutations = list(itertools.permutations(transactions, 3))
     # Print size of list for testing.
-    #print "143 Permutations: ", len(comparePermutations)
+    #print "48 Permutations: ", len(comparePermutations)
     # Get transaction chains.
     transactionChains = getChains(comparePermutations)
     return transactionChains
@@ -96,45 +104,3 @@ def chainProfitLoss(chain):
     return total
 
 ################################################################################
-
-# Returns the total cost of a chain of transactions (in progress - may be refactored).
-def chainProfit(chain, amount):
-    #print "148 chain profit"
-    for i in chain:
-        print "{}({})->{}({})".format(str(i.curr1.name),str(i.curr1.exchange),str(i.curr2.name), str(i.curr2.exchange))
-    print "Starting profit/loss 3"
-    profitLoss = 0.00
-    curr1 = chain[0]
-    curr2 = chain[1]
-    curr3 = chain[2]
-    print "Curr 1: "
-    currency.printCurr(curr1)
-    print "Curr 2: "
-    currency.printCurr(curr2)
-    # Amount of coins to sell.
-    amountToSell = amount/curr1.price
-    # Value of sale
-    sellValue = amountToSell * curr1.price
-    print "amountToSell: {} (${})".format(str(amountToSell),str(sellValue))
-    # Amount of coins to buy.
-    curr2.amount = sellValue/curr2.price
-    buyValue = curr2.amount * curr2.price
-    print "amountToBuy: {} (${})".format(str(curr2.amount), str(buyValue))
-    # Revenue from first transaction.
-    revenue = calc.multRevenue(curr1, curr2)
-    # Profit/loss = revenue - investment of first transaction.
-    firstProfitLoss = revenue - (curr1.price * curr1.amount)
-    # Amount of coins to sell.
-    amountToSell = amount/curr2.price
-    # Value of sale
-    sellValue = amountToSell * curr2.price
-    print "2. amountToSell: {} (${})".format(str(amountToSell),str(sellValue))
-    # Amount of coins to buy.
-    curr3.amount = sellValue/curr3.price
-    buyValue = curr3.amount * curr3.price
-    # Revenue from second transaction.
-    revenue = calc.multRevenue(curr2, curr3)
-    secondProfitLoss = revenue - (curr2.price * curr2.amount)
-    profitLoss = firstProfitLoss + secondProfitLoss
-    print "Total profit of chain of transaction: {}".format(str(profitLoss))
-    return profitLoss

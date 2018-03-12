@@ -38,11 +38,11 @@ def initServer(fromaddr, password):
 
 # Set message headers
 def setHeader(fromaddr, toaddr):
-	msg = MIMEMultipart()
-	msg['From'] = fromaddr
-	msg['To'] = toaddr
-	msg['Subject'] = "CryO Opportunity"
-	return msg
+    msg = MIMEMultipart()
+    msg['From'] = fromaddr
+    msg['To'] = toaddr
+    msg['Subject'] = "CryO Opportunity"
+    return msg
 
 ################################################################################
 # Init Server

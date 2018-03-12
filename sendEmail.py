@@ -10,18 +10,16 @@ from email.mime.multipart import MIMEMultipart
 import os
 
 # Message headers
-# fromaddr = "[sending email]"
+fromaddr = "[sending email]"
 toaddr = "[receiving email]"
-fromaddr = os.getenv('GMAIL_EMAIL')
-password = os.getenv('GMAIL_PW')
 msg = MIMEMultipart()
 msg['From'] = fromaddr
 msg['To'] = toaddr
 msg['Subject'] = "CryO Opportunity"
 
 addressToSend = "[receiving email]"
-# fromaddr = os.getenv('GMAIL_EMAIL')
-# password = os.getenv('GMAIL_PW')
+fromaddr = os.getenv('GMAIL_EMAIL')
+password = os.getenv('GMAIL_PW')
 
 ################################################################################
 

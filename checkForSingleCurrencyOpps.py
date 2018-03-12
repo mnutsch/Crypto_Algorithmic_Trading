@@ -7,6 +7,7 @@
 
 import readExchangeRatesGDAX, readExchangeRatesGemini
 import currency, exchange
+import numpy
 
 # Opportunity object stores the potential info about an exchange.
 class Opportunity():
@@ -142,3 +143,84 @@ def checkAllCurrencies(amount):
     return arbOpps
 
 ################################################################################
+# Added new code below:
+# Returns amount of coins to check based on dollar amount provided.
+def getAmtCoins(amount, xchng1, xchng2):
+    amtCoins = 0
+    # Amount of coins to check = amt/lowest price.
+    if xchng1.price > xchng2:
+        price = xchng2.price
+    else:
+        price = xchng1.price
+    amtCoins = amount/price
+    return amtCoins
+
+################################################################################
+# Calculates arbitrage opportunities for all currencies at exchanges, taking into consideration minimum profit.
+def checkAllbyProfit(maxCost, minProfit):
+    
+    # GDAX ethereum (ETH) exchange info.
+    gdaxEth = exchange.getExchange('gdax', 'ETH')
+    # Gemini ethereum (ETH) exchange info.
+    geminiEth = exchange.getExchange('gemini', 'ETH')
+    amtCoins = getAmtCoins(maxCost, gdaxEth, geminiEth)
+    # Check opportunities for ethereum.
+    oppEth = checkOppProfit(amtCoins, gdaxEth, geminiEth)
+    
+    # GDAX Bitcoin Core (BTC) exchange info.
+    gdaxBtc = exchange.getExchange('gdax', 'BTC')
+    # Gemini Bitcoin Core (BTC) exchange info.
+    geminiBtc = exchange.getExchange('gemini', 'BTC')
+    # Check opportunities for litecoin.
+    amtCoins = getAmtCoins(maxCost, gdaxBtc, geminiBtc)
+    oppBtc = checkOppProfit(amtCoins, gdaxBtc, geminiBtc)
+    
+    # Return array of arbitrage opportunities.
+    arbOpps = [oppEth, oppBtc]
+    #print arbOpps
+    
+    # Determine profitable opps.
+    profitableOpps = []
+    for i in arbOpps:
+        if i.profitLoss > minProfit:
+            #print "Profit!"
+            #print (i)
+            profitableOpps.append(i)
+    
+    return profitableOpps
+    
+################################################################################
+
+# Helper function for checkAllbyProfit. Checks for an arbitrage opportunity 
+#for a given amount of coins (float) between exchanges.
+def checkOppProfit(amount, gdax, gemini):
+
+    # Set max opportunity amount to arbitrary negative number
+    maxOpp = Opportunity()
+    maxOpp.profitLoss = -999999999.99;
+    
+    # If GDAX price is higher.
+    if gdax.price > gemini.price:
+        # Calculate opportunities from 0.001 to amount.
+        oppList = numpy.arange(0.001, amount, 0.001)
+        for i in oppList:
+            # Calculate profit/loss opportunity.
+            opportunity = calculateProfitLoss(i, gdax, gemini)
+            # If profit greater than the current max, update.
+            if opportunity.profitLoss > maxOpp.profitLoss:
+                maxOpp = opportunity
+        return maxOpp
+    # Else if Gemini price is higher.
+    elif gdax.price < gemini.price:
+        # Calculate opportunities from 0.001 to amount.
+        oppList = numpy.arange(0.001, amount, 0.001)
+        for i in oppList:
+            # Calculate profit/loss opportunity.
+            opportunity = calculateProfitLoss(i, gemini, gdax)
+            # If profit greater than the current max, update.
+            if opportunity.profitLoss > maxOpp.profitLoss:
+                maxOpp = opportunity
+        return maxOpp
+    # Else prices equal, no arbitrage opportunity.
+    elif gdax.price == gemini.price:
+        return None

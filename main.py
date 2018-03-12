@@ -8,17 +8,26 @@ import urllib
 import sendEmail
 import os
 import checkForSingleCurrencyOpps
+import inspect
+from pprint import pprint
 
 INTERVAL = 60 # seconds
+# PHONE_NUMBERS = ['14696488502', '12539612914']
+PHONE_NUMBERS = ['14696488502']
+THRESHHOLD = 0
+EMAIL_LIST = ['timothy.bramlett@gmail.com', 'timbram@gmail.com']
 
-PHONE_NUMBERS = ['14696488502', '12539612914']
-THRESHHOLD = 500
-
+# just for testing
 sendEmail.sendSingleEmail('timothy.bramlett@gmail.com', 'main.py starting up...')
 
-def get_all_rates():
-    """TODO: If we decide we need it"""
-    pass
+
+def notify_subscribed_via_email(message):
+    for email in EMAIL_LIST:
+        sendEmail.sendSingleEmail(email, message)
+
+def notify_subscribed_via_sms(message):
+    for phone in PHONE_NUMBERS:
+        sendSMS.sendSMSMessage(phone, message)
 
 
 def main():
@@ -28,39 +37,16 @@ def main():
 
         result = checkForSingleCurrencyOpps.checkAllCurrencies(100)
 
-        print result
-
-        # # Get the rates from all the exchanges
-        # print '\n\nCalling readExchangeRatesGemini()'
-        # print 'Calling readExchangeRatesGDAX'
-
-        # BTCToUSDFromGDAX = float(readExchangeRatesGDAX.getBTCToUSDFromGDAX())
-        # BTCToUSDFromGemini = float(readExchangeRatesGemini.getBTCToUSDFromGemini())
-
-        
-        # print ''
-        # print 'BTCToUSDFromGDAX: {}'.format(BTCToUSDFromGDAX) 
-        # print 'BTCToUSDFromGemini: {}'.format(BTCToUSDFromGemini)
-        
-
-        # # Analyze the rates to check for opportunities
-        # print '\nAnalyzing the rates...'
-        # diff = BTCToUSDFromGDAX - BTCToUSDFromGemini
-        # print 'Diff: {}'.format(abs(diff))
-
-        # # now lets check the abs diff between the two
-        # if abs(diff) >= THRESHHOLD:
-        #     for phone in PHONE_NUMBERS:
-        #         message = 'GDAX price: {} Gemini price: {}'.format(BTCToUSDFromGDAX, BTCToUSDFromGemini)
-        #         sendEmail.sendSingleEmail('timothy.bramlett@gmail.com', message)
-        #         message = urllib.quote_plus(message)
-        #         print message
-        #         sendSMS.sendSMSMessage(phone, message)
+        for opportunity in result:
+            if opportunity.profitLoss < THRESHHOLD:
+                message = """New Arbitrage opportunity: {}
+                """.format(vars(opportunity))
+                notify_subscribed_via_sms(message)
+                notify_subscribed_via_email(message)
 
         # Wait for some specified interval
         # Repeat step one
         time.sleep(INTERVAL)
-
 
 
 if __name__ == '__main__':

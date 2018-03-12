@@ -1,1 +1,4 @@
 *.pyc
+
+# virtual environments are usually named with a scheme like this
+*venv*

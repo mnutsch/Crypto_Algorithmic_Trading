@@ -23,6 +23,12 @@ def printChain(chain):
     for i in chain:
         printTrans(i)
         
+# Opportunity object stores the potential info about a chain of transactions.
+class multipleOpportunity():
+    startingAmount = 0.00
+    transactionChain = ""
+    profitLoss = 0.00
+        
 ################################################################################
 '''
 # Print cost for debugging.
@@ -38,93 +44,70 @@ def printCost(curr1, curr2):
     print "{}->{} cost: {}".format(curr1.name, curr2.name, str(cost))
 '''
 ################################################################################
-
+# Returns revenue for a transaction.
 def calcMultRev(curr1, curr2):
     revenue = 0.00
+    #printTrans(curr1)
+    #printTrans(curr2)
     depositCost = currency.getFeeCost(curr2, curr2.depositFee)
+    #print "51, dep cost: ", depositCost
     revenue = ((curr2.amount * curr2.price) * depositCost)/curr2.price
     curr1XchgFee = currency.getFeeCost(curr1, curr1.exchangeFee)
+    #print "56, xchg1: ", curr1XchgFee
     revenue = revenue * curr1XchgFee 
-    revenue = revenue * curr1.price 
+    #print "58 rev: ", revenue
+    #revenue = revenue * (curr1.price)
+    revenue = revenue * (curr1.price * curr1.amount)
+    #print "60 rev: ", revenue
     curr2XchgFee = currency.getFeeCost(curr2, curr2.exchangeFee)
     revenue = revenue * curr2XchgFee
+    #print "62 rev: ", revenue
     withdrawCost = currency.getFeeCost(curr1, curr1.withdrawFee)
     revenue = revenue * withdrawCost
     return revenue
+    # rev = ((((B13             *B4)            *(100-B5)/100)/B4      *(100-B7)/100)     *C4          *(100-C7)/100)*(100-C10)/100
+    #revenue = ((curr2.amount * curr2.price) * depositCost)/curr2.price * curr1XchgFee * curr1.price * curr2XchgFee * withdrawCost
     
 ################################################################################
 
 # Returns profit loss for a currency transaction for multiple arbitrage (potentially
 # different exchanges, etc.).
 def multProfitLoss(curr1, curr2, amount):
-    #print "Starting profit/loss"
-    #print "Curr 1: "
-    #currency.printCurr(curr1)
-    #print "Curr 2: "
-    #currency.printCurr(curr2)
+
     profitLoss = 0
-    # Amount of coins to sell.
-    amountToSell = amount/curr1.price
-    curr1.amount = amountToSell
-    # Value of sale
-    sellValue = amountToSell * curr1.price
+    # Amount of coins to sell and value of sale.
+    curr1.amount = amount/curr1.price
+    sellValue = curr1.amount * curr1.price
     #print "amountToSell: {} (${})".format(str(amountToSell),str(sellValue))
-    # Need fee cost of sale?
-    # Amount of coins to buy.
-    amountToBuy = sellValue/curr2.price
-# added this here
-    curr2.amount = amountToBuy
-    buyValue = amountToBuy * curr2.price
+    # Amount of coins to buy and value.
+    curr2.amount = sellValue/curr2.price
+    buyValue = curr2.amount * curr2.price
     #print "amountToBuy: {} (${})".format(str(amountToSell), str(sellValue))
     revenue = buyValue - sellValue
-    # modified from single:
-    #depositCost = currency.getDepositCost(curr2)
-    depositCost = currency.getFeeCost(curr2, curr2.depositFee)
-    withdrawCost = currency.getFeeCost(curr1, curr1.withdrawFee)
-    #curr1XchgFee = currency.getExchangeCost(curr1)
-    curr1XchgFee = currency.getFeeCost(curr1, curr1.exchangeFee)
-    curr2XchgFee = currency.getFeeCost(curr2, curr2.exchangeFee)
-    # orig
-    #revenue = ((amount * curr2.price) * depositCost)/curr2.price * curr1XchgFee * curr1.price * curr2XchgFee * withdrawCost
-    # try 2   # should this be an amount to buy?
-    revenue = ((curr2.amount * curr2.price) * depositCost)/curr2.price * curr1XchgFee * curr1.price * curr2XchgFee * withdrawCost
+    
+    #printTrans(curr1)
+    #printTrans(curr2)
+    #revenue = ((curr2.amount * curr2.price) * depositCost)/curr2.price * curr1XchgFee * curr1.price * curr2XchgFee * withdrawCost
     #print "OG revenue: ", revenue
     revenue = calcMultRev(curr1, curr2)
-    #print "New revenue: ", revenue
     # Profit/loss = revenue - investment.
+    investment = (curr1.price * curr1.amount)
+    #print "103 investment: ", investment
     profitLoss = revenue - (curr1.price * curr1.amount)
     #profitLoss = revenue - (curr1.price * amount)
-    '''
-    print "Amount: ", amount
-    print "withdraw % ", curr1.withdrawFee
-    print "withdrawCost", withdrawCost
-    print "depositCost: ", depositCost
-    print "cur1 xchg fee: ", curr1XchgFee
-    print "cur2 xchg fee: ", curr2XchgFee
-    print "63 mult revenue:", revenue
-    print "64 profitLoss: ", profitLoss
-    print "Curr 1: "
-    currency.printCurr(curr1)
-    print "Curr 2: "
-    currency.printCurr(curr2)'''
     return profitLoss
 
 ################################################################################
 
-# Returns the calculated profit/loss for 3 currencies in a transaction chain.
+# Returns the calculated profit/loss for 3 currencies in a transaction chain
+# (alternative method explored to attempt to produce better results).
 def profitLoss3(curr1, curr2, curr3, amount):
-    print "Starting profit/loss 3"
     profitLoss = 0.00
-    print "Curr 1: "
-    currency.printCurr(curr1)
-    print "Curr 2: "
-    currency.printCurr(curr2)
-    # Amount of coins to sell.
+    # Amount of coins to sell and value of sale.
     amountToSell = amount/curr1.price
-    # Value of sale
     sellValue = amountToSell * curr1.price
     #print "amountToSell: {} (${})".format(str(amountToSell),str(sellValue))
-    # Amount of coins to buy.
+    # Amount of coins to buy and value of buy.
     curr2.amount = sellValue/curr2.price
     buyValue = curr2.amount * curr2.price
     #print "amountToBuy: {} (${})".format(str(curr2.amount), str(buyValue))
@@ -149,7 +132,6 @@ def profitLoss3(curr1, curr2, curr3, amount):
 
 ################################################################################
 
-# need to add gemini 
 # Returns list of arbitrage opportunties by focusing on transactions with most 
 # profit (aggress approach, more profitable results).
 def checkOpps(amount):
@@ -167,16 +149,26 @@ def checkOpps(amount):
     
     # Get list of profitable chains of transactions.
     profitable = getProfitableChains(transactionChains, amount)
-
+    
+    opportunities = []
     if len(profitable) > 0:
-        print "First profit: "
-        chains.printChain(profitable[0])
-        chains.chainProfitLoss(profitable[0])
+        #print "First profit: "
+        #chains.printChain(profitable[0])
+        #chains.chainProfitLoss(profitable[0])
+        # Create opportunity object with relevant info for each profitable opportunity.
+        for i in profitable:
+            newOpp = multipleOpportunity()    
+            # Add currencies, starting amt
+            newOpp.startingAmount = amount
+            newOpp.profitLoss = chains.chainProfitLoss(i)
+            newOpp.transactionChain = chains.chainMessage(i)
+            opportunities.append(newOpp)
     ''' # Alternative method for of calculating
     print "Testing profitLoss 3"
     profitLoss = profitLoss3(curr1, curr2, curr3, 10)
     print "profitLoss 3: ", profitLoss'''
-    return profitable
+    #return profitable
+    return opportunities
     
 ################################################################################
 
@@ -218,11 +210,6 @@ def checkOppsCost(amount):
     # print positive conv 0
     #for i in positiveConversions[0]:
     #    print "Transaction: {}({})->{}({}): {}".format(str(i.curr1.name), str(i.curr1.exchange), str(i.curr2.name), str(i.curr2.exchange), str(i.cost))
-    
-    #print "Testing chain cost..."
-    #chains.chainCost(positiveConversions[0])
-    #print "Testing chain profit..."
-    #chains.chainProfit(positiveConversions[0])
     
     # Get list of transaction chains up to 3 transactions.
     transactionChains = chains.getTransactionChains(currencyList)

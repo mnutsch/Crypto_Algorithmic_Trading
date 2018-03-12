@@ -7,7 +7,27 @@
 import calc, currency, conversions
 import itertools
 
-# Prints and returns a string for a chain of transactions. 
+# Returns a string for a chain of transactions. 
+def chainMessage(chain):
+    transactionChain = "Transaction chain: "
+    for i in chain:
+        transactionChain += str(i.curr1.name)
+        transactionChain += str("(")
+        transactionChain += str(i.curr1.exchange)
+        transactionChain += str(")")
+        transactionChain += str("->")
+        transactionChain += str(i.curr2.name)
+        transactionChain += str("(")
+        transactionChain += str(i.curr2.exchange)
+        transactionChain += str(")")
+        transactionChain += str(". ")
+    #print transactionChain
+    # Return string
+    return transactionChain
+
+################################################################################
+        
+# Prints chain of transactions for debugging.
 def printChain(chain):
     transactionChain = "Transaction chain: "
     for i in chain:
@@ -22,8 +42,6 @@ def printChain(chain):
         transactionChain += str(")")
         transactionChain += str(". ")
     print transactionChain
-    # Return string
-    return transactionChain
 
 ################################################################################
     
@@ -90,7 +108,7 @@ def chainCost(chain):
     cost = 0.00
     for i in chain:
         cost += i.cost
-    print "Total cost of chain of transactions: {}".format(str(cost))
+    #print "Total cost of chain of transactions: {}".format(str(cost))
     return cost
 
 ################################################################################
@@ -100,7 +118,7 @@ def chainProfitLoss(chain):
     total = 0.00
     for i in chain:
         total += i.profitLoss
-    print "Total profit/loss of transaction chain: {}".format(str(total))
+    #print "Total profit/loss of transaction chain: {}".format(str(total))
     return total
 
 ################################################################################

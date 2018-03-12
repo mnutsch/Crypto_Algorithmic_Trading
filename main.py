@@ -8,8 +8,8 @@ import urllib
 import sendEmail
 import os
 import checkForSingleCurrencyOpps
-# import inspect
-# from pprint import pprint
+import execTransactionsGemini
+import execTransactionsGDAX
 
 
 # just for testing

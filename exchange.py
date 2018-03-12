@@ -6,7 +6,7 @@
 
 import currency
 
-# Review deposit fees...add getVolume?
+# Review deposit fees
 
 # Exchange object contains information relevant to a currency at that exchange.    
 class Exchange(): 
@@ -21,7 +21,7 @@ class Exchange():
 ################################################################################
 
 # Returns currency info at a given exchange.
-def getExchange(xchg, curr, vol):
+def getExchange(xchg, curr):
     exchgInfo = Exchange()
     exchgInfo.name = xchg
     exchgInfo.currency = curr

@@ -23,7 +23,7 @@ class Currency():
     exchangeFee = 0.00
     withdrawFee = 0.00
 
-# From SO: https://stackoverflow.com/questions/5969806/print-all-properties-of-a-python-class- used for debug    
+# From SO: https://stackoverflow.com/questions/5969806/print-all-properties-of-a-python-class- used only for debuggging.   
 def printCurr(curr):
     attrs = vars(curr)
     print ', '.join("%s: %s" % item for item in attrs.items())
@@ -36,16 +36,15 @@ def getWithdrawFee(xchg, curr):
         fee = 0.00
     elif xchg == 'gemini':
         if curr == 'BTC':
-            #fee = 1.002 # Review, fees apply for 10+ trades/month
+            #fee = 1.002 # Review, fees may apply for 10+ trades/month.
             fee = 0.00
         elif curr == 'ETH':
-           # fee = 1.001
             fee = 0.00
     return fee
 
 ################################################################################
 
-# Returns users trade volume. Need to add exchanges or only used on gdax?
+# Returns users trade volume.
 def getUserVolume(curr):
     if curr == 'BTC':
         volume = 151694.90
@@ -70,7 +69,7 @@ def gdaxUserVol(curr, volume):
         vol30day = 4190702.95
     elif curr == 'LTC':
         vol30day = 18736120.64
-    
+    # Calculate and return user's volume %.
     userVol = (volume/vol30day) * 100
     return userVol
 
@@ -78,12 +77,11 @@ def gdaxUserVol(curr, volume):
 
 # Returns exchange fee for a currency at an exchange.
 def getExchangeFee(exchange, curr):
+    # Get user's volume, which will determine exchange fee pricing.
     volume = getUserVolume(curr)
-    #print "65 calc:", exchange, curr, volume
     if exchange is "gdax":
         # Gdax uses a volume percentage for fees, get user percentage.
         userVol = gdaxUserVol(curr, volume)
-        #print "user vol: ", userVol
         if userVol >= 0.0 and userVol <= 1.0:
             # BTC is only currency that has different fee %.
             if curr == 'BTC':
@@ -196,7 +194,6 @@ def getCurrencyList():
 def getCost(curr, amount):
     fee = getExchangeFee(curr.exchange, curr.name)
     cost = (amount * curr.price * fee)/100.00
-    #cost = (amount * curr.price) + currFee
     return cost
 
 ################################################################################

@@ -32,3 +32,6 @@ MIN_PROFIT = 0
 NOTIFY_SMS = False
 # Set true to send notifications via email.
 NOTIFY_EMAIL = False
+# Set true to log information about number of transactions to the console while 
+# checkiing for multiple currency opportunities.
+OUTPUT = True

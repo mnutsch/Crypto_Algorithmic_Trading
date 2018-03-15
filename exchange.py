@@ -44,7 +44,7 @@ def getExchange1(xchg, curr):
 
 ################################################################################
 
-# Returns deposit % fee for a currency at a given exchange.
+# Returns deposit % fee for a currency at a given exchange (currently no fees).
 def getDepositFee(xchg, curr):
     fee = 0
     if xchg == 'gdax':

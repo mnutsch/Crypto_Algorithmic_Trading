@@ -19,7 +19,7 @@ For example, the app will check the USD exchange rate for Bitcoin at the exchang
 "CRY0 - Mid Point Project Check.pdf" for a mid point status update on the project.<br/>
 
 Check out the video at this URL for a short video update on the mid point status of the project.
-https://media.oregonstate.edu/media/t/0_gpfirjd4
+https://media.oregonstate.edu/media/t/1_0vcs7gjq
 
 <hr>
 

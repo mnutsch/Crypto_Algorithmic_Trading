@@ -6,8 +6,6 @@
 
 import currency
 
-# Review deposit fees
-
 # Exchange object contains information relevant to a currency at that exchange.    
 class Exchange(): 
     name = None
@@ -46,7 +44,6 @@ def getExchange1(xchg, curr):
 
 ################################################################################
 
-# Review get deposit fee - should there be a fee or is there a volume %?
 # Returns deposit % fee for a currency at a given exchange.
 def getDepositFee(xchg, curr):
     fee = 0

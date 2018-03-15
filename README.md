@@ -3,6 +3,9 @@ This repository contains code for algorithmically trading cryptocurrencies.
 
 <u><strong>Introduction:</strong></u>
 
+<em>Check out the video at this URL for a short introduction to the project.
+https://media.oregonstate.edu/media/t/1_0vcs7gjq</em>
+
 This is a cryptocurrency app with the ability to perform algorithmic trading. Specifically, our app looks for arbitrage opportunities.
 
 The app continuously queries the U.S. dollar exchanges rates of various cryptocurrencies. If it finds a situation where the exchange rates are not consistent, then it automatic executes a trade. In other words, this a bot which finds arbitrage opportunities for cryptocurrencies.
@@ -17,9 +20,6 @@ For example, the app will check the USD exchange rate for Bitcoin at the exchang
 <strong>Documentation:</strong><br/>
 "CRY0 - Original Project Plan.pdf" for the original project plan.<br/>
 "CRY0 - Mid Point Project Check.pdf" for a mid point status update on the project.<br/>
-
-Check out the video at this URL for a short video update on the mid point status of the project.
-https://media.oregonstate.edu/media/t/1_0vcs7gjq
 
 <hr>
 

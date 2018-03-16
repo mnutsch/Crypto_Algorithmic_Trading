@@ -75,3 +75,11 @@ If needed, enable third party email clients in the email service's settings.
 Edit the file .bashrc to include the username and password for the email service. This is a hidden file which resides in a Linux user's home directory. Add the following lines to the file. Enter the email address and password for the email account where appropriate.
 export GMAIL_EMAIL="yourEmail@gmail.com"
 export GMAIL_PW="enterYourPasswordHere"
+
+<strong>Adjust configuration options for your purposes(optional)</strong>
+The configurations.py file contains several options to adjust several features such as notifications, time intervals, console output, maximum cost/minimum profit thresholds, etc.
+
+<strong>After appropriate setup and configurations:</strong>
+1. Enter command to run on server:
+python main.py
+2. Enter ‘ctrl-z’ to quit.

@@ -40,7 +40,7 @@ def main():
         else:
             for opportunity in result:
                 # for testing
-                print "Profit/loss: ", opportunity.profitLoss
+                #print "Profit/loss: ", opportunity.profitLoss
                 #if opportunity.profitLoss < THRESHHOLD:
                 if opportunity.profitLoss > THRESHHOLD:
                     message = """New Arbitrage opportunity: {}

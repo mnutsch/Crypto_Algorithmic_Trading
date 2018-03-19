@@ -14,7 +14,7 @@ import execTransactionsGDAX
 
 
 # just for testing
-# sendEmail.sendSingleEmail('timothy.bramlett@gmail.com', 'main.py starting up...')
+# sendEmail.sendSingleEmail('myEmail@gmail.com', 'main.py starting up...')
 
 
 def notify_subscribed_via_email(opp, message):

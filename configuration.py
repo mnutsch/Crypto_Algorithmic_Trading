@@ -7,16 +7,11 @@ INTERVAL = 60 # seconds
 PHONE_NUMBERS = ['1234567890']
 # Multiple phone numbers are possible.
 # PHONE_NUMBERS = ['1234567890', '9876543210']
-# Remove prior to submission.
-# PHONE_NUMBERS = ['14696488502', '12539612914']
-PHONE_NUMBERS = ['14696488502']
 
 # Set email for email notifications.
 EMAIL_LIST = ['sampleEmail@gmail.com']
 # Multiple emails are possible.
 #EMAIL_LIST = ['sampleEmail@gmail.com', 'sampleEmail2@gmail.com']
-# Remove prior to submission.
-EMAIL_LIST = ['timothy.bramlett@gmail.com']
 
 # Set a threshold amount for opportunities you would 
 # like to recieve notifications/execute trades on.
